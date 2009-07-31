@@ -1,0 +1,13 @@
+= Local CDN
+
+Local CDN simplifies the inclusion of external stylesheets and JavaScript from Yahoo's and Google's content delivery networks (CDNs), and uses local alternatives in development mode so your site loads faster and looks right even when you don't have an Internet connection (eg, on an airplane). 
+
+Please see the comments in <tt>lib/local_cdn.rb</tt> for usage examples.
+
+
+== Prerequisites
+
+For YUI to be served locally, please install it at <tt>http://localhost/yui</tt>.
+
+
+Copyright (c) 2009 Alex Reisner, released under the MIT license
