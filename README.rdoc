@@ -7,7 +7,15 @@ Please see the comments in <tt>lib/local_cdn.rb</tt> for usage examples.
 
 == Prerequisites
 
-For YUI to be served locally, please install it at <tt>http://localhost/yui</tt>.
+For YUI to be served locally, please install it on your development machine. If you use this tag in your view:
+
+  <%= yui_stylesheet_link_tag "2.7.0/build/base/base-min.css" %>
+
+then the file must be available at:
+
+  http:// localhost/yui/2.7.0/build/base/base-min.css
+
+Basically, just create a +yui+ directory in your local web server's DocumentRoot and unzip the entire YUI package to it, renaming the package's root directory to its version number.
 
 
 Copyright (c) 2009 Alex Reisner, released under the MIT license
