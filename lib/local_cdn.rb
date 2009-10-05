@@ -54,9 +54,12 @@ module LocalCDN
 	# Render a Scriptaculous include tag. Uses local copy in development mode,
 	# Google CDN otherwise.
 	#
-	def scriptaculous_include_tag
-	  javascript_include_tag (RAILS_ENV == 'development') ?
-	    ["effects", "controls", "dragdrop"] :
-      "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/scriptaculous.js"
+	def scriptaculous_include_tag(*files)
+	  unless RAILS_ENV == 'development'
+	    files.map! do |f|
+	      "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/#{f}.js"
+	    end
+	  end
+	  javascript_include_tag(*files)
 	end
 end
