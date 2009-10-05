@@ -56,8 +56,7 @@ module LocalCDN
 	#
 	def scriptaculous_include_tag
 	  javascript_include_tag (RAILS_ENV == 'development') ?
-	    ["controls", "dragdrop", "effects", "slider"] :
-      "http://ajax.googleapis.com/ajax/libs/scriptaculous/" +
-        "1.8.1/scriptaculous.js"
+	    ["effects", "controls", "dragdrop"] :
+      "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/scriptaculous.js"
 	end
 end
