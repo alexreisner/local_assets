@@ -4,6 +4,8 @@ Local CDN simplifies the inclusion of external stylesheets and JavaScript from Y
 
 Please see the comments in <tt>lib/local_cdn.rb</tt> for usage examples.
 
+<b>Local CDN is compatible with Rails 2.x and Rails 3.</b>
+
 
 == Prerequisites
 
