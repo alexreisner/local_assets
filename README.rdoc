@@ -20,4 +20,4 @@ then the file must be available at:
 Basically, just create a +yui+ directory in your local web server's DocumentRoot and unzip the entire YUI package to it, renaming the package's root directory to its version number.
 
 
-Copyright (c) 2009 Alex Reisner, released under the MIT license
+Copyright (c) 2009-10 Alex Reisner, released under the MIT license
