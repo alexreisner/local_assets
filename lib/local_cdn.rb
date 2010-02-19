@@ -12,7 +12,7 @@ module LocalCDN
   #     "2.7.0/build/tabview/assets/tabview-core.css" %> 
 	#
 	def yui_stylesheet_link_tag(*files)
-	  if Rails.env == "development"
+	  if dev_on_localhost?
 	    base_url = "http://localhost/yui/"
 	    out = files.map{ |f| stylesheet_link_tag(base_url + f) }.join("\n")
     else
@@ -33,7 +33,7 @@ module LocalCDN
   #     "2.7.0/build/container/container-min.js" %>
 	#
 	def yui_javascript_include_tag(*files)
-	  if Rails.env == "development"
+	  if dev_on_localhost?
 	    base_url = "http://localhost/yui/"
 	    out = files.map{ |f| javascript_include_tag(base_url + f) }.join("\n")
     else
@@ -48,7 +48,7 @@ module LocalCDN
 	# Google CDN otherwise.
 	#
 	def prototype_include_tag
-	  out = javascript_include_tag(Rails.env == "development" ? "prototype" :
+	  out = javascript_include_tag(dev_on_localhost?? "prototype" :
       "http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js")
     rails_3?? out.html_safe : out
 	end
@@ -58,7 +58,7 @@ module LocalCDN
 	# Google CDN otherwise.
 	#
 	def scriptaculous_include_tag(*files)
-	  unless Rails.env == "development"
+	  unless dev_on_localhost?
 	    files.map! do |f|
 	      "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/#{f}.js"
 	    end
@@ -69,6 +69,14 @@ module LocalCDN
 	
 	
 	private # -----------------------------------------------------------------
+	
+	##
+	# Are we in the development environment
+	# and accessing the site via localhost?
+	#
+	def dev_on_localhost?
+	  Rails.env == "development" and request.host == "localhost"
+	end
 	
 	##
 	# Are we on Rails 3?
