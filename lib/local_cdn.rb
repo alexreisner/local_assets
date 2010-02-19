@@ -12,9 +12,10 @@ module LocalCDN
   #     "2.7.0/build/tabview/assets/tabview-core.css" %> 
 	#
 	def yui_stylesheet_link_tag(*files)
-	  if dev_on_localhost?
-	    base_url = "http://localhost/yui/"
-	    out = files.map{ |f| stylesheet_link_tag(base_url + f) }.join("\n")
+	  if development?
+	    out = files.map{ |f|
+	      stylesheet_link_tag(local_base_yui_url + f)
+	    }.join("\n")
     else
       base_url = "http://yui.yahooapis.com/combo?"
 	    out = stylesheet_link_tag(base_url + files.join("&"))
@@ -33,9 +34,10 @@ module LocalCDN
   #     "2.7.0/build/container/container-min.js" %>
 	#
 	def yui_javascript_include_tag(*files)
-	  if dev_on_localhost?
-	    base_url = "http://localhost/yui/"
-	    out = files.map{ |f| javascript_include_tag(base_url + f) }.join("\n")
+	  if development?
+	    out = files.map{ |f|
+	      javascript_include_tag(local_base_yui_url + f)
+	    }.join("\n")
     else
       base_url = "http://yui.yahooapis.com/combo?"
 	    out = javascript_include_tag base_url + files.join("&")
@@ -48,7 +50,7 @@ module LocalCDN
 	# Google CDN otherwise.
 	#
 	def prototype_include_tag
-	  out = javascript_include_tag(dev_on_localhost?? "prototype" :
+	  out = javascript_include_tag(development?? "prototype" :
       "http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js")
     rails_3?? out.html_safe : out
 	end
@@ -58,7 +60,7 @@ module LocalCDN
 	# Google CDN otherwise.
 	#
 	def scriptaculous_include_tag(*files)
-	  unless dev_on_localhost?
+	  unless development?
 	    files.map! do |f|
 	      "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/#{f}.js"
 	    end
@@ -71,11 +73,17 @@ module LocalCDN
 	private # -----------------------------------------------------------------
 	
 	##
-	# Are we in the development environment
-	# and accessing the site via localhost?
+	# Are we in the development environment?
 	#
-	def dev_on_localhost?
-	  Rails.env == "development" and request.host == "localhost"
+	def development?
+	  Rails.env == "development"
+	end
+	
+	##
+	# Base URL for the local YUI installation.
+	#
+	def local_base_yui_url
+	  "http://#{request.host}/yui/"
 	end
 	
 	##
