@@ -12,15 +12,7 @@ module LocalCDN
   #     "2.7.0/build/tabview/assets/tabview-core.css" %> 
 	#
 	def yui_stylesheet_link_tag(*files)
-	  if development?
-	    out = files.map{ |f|
-	      stylesheet_link_tag(local_base_yui_url + f)
-	    }.join("\n")
-    else
-      base_url = "http://yui.yahooapis.com/combo?"
-	    out = stylesheet_link_tag(base_url + files.join("&"))
-    end
-    rails_3?? out.html_safe : out
+	  yui_include_tag(:stylesheet_link, files)
 	end
 	
 	##
@@ -34,15 +26,7 @@ module LocalCDN
   #     "2.7.0/build/container/container-min.js" %>
 	#
 	def yui_javascript_include_tag(*files)
-	  if development?
-	    out = files.map{ |f|
-	      javascript_include_tag(local_base_yui_url + f)
-	    }.join("\n")
-    else
-      base_url = "http://yui.yahooapis.com/combo?"
-	    out = javascript_include_tag base_url + files.join("&")
-    end
-    rails_3?? out.html_safe : out
+	  yui_include_tag(:javascript_include, files)
 	end
 	
 	##
@@ -71,6 +55,23 @@ module LocalCDN
 	
 	
 	private # -----------------------------------------------------------------
+	
+	##
+	# Render a YUI include tag. The +type+ parameter should be a string
+	# or symbol: :javascript_include or :stylesheet_link.
+	# The +files+ parameter is an array of filenames.
+	#
+	def yui_include_tag(type, files)
+	  if development?
+	    out = files.map{ |f|
+	      send("#{type}_tag", local_base_yui_url + f)
+	    }.join("\n")
+    else
+	    out = send("#{type}_tag",
+	      "http://yui.yahooapis.com/combo?" + files.join("&"))
+    end
+    rails_3?? out.html_safe : out
+	end
 	
 	##
 	# Are we in the development environment?
