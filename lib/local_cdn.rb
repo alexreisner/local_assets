@@ -88,9 +88,9 @@ module LocalCDN
 	end
 	
 	##
-	# Are we on Rails 3?
+	# Are we on Rails 3 or using the rails_xss plugin?
 	#
 	def rails_3?
-	  Rails.version[0...1] == "3"
+	  String.instance_methods.include?("html_safe?")
 	end
 end
