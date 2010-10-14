@@ -74,17 +74,19 @@ module LocalCDN
   end
 
   ##
-  # Are we in the development environment?
+  # Are we in the development environment and on localhost?
   #
   def development?
-    Rails.env == "development"
+    Rails.env == "development" and (
+      request.server_name =~ /local/ or request.server_name == '127.0.0.1'
+    )
   end
 
   ##
   # Base URL for the local YUI installation.
   #
   def local_base_yui_url
-    "http://#{request.host}/yui/"
+    "http://localhost/yui/"
   end
 
   ##
