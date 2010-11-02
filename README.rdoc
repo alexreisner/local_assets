@@ -1,23 +1,49 @@
 = Local CDN
 
-Local CDN simplifies the inclusion of external stylesheets and JavaScript from Yahoo's and Google's content delivery networks (CDNs), and uses local alternatives in development mode so your site loads faster and looks right even when you don't have an Internet connection (eg, on an airplane). 
-
-Please see the comments in <tt>lib/local_cdn.rb</tt> for usage examples.
+Local CDN simplifies the inclusion of external stylesheets and JavaScript from various content delivery networks (CDNs), and uses local alternatives for local requests in development mode so your site loads faster and looks right even when you don't have an Internet connection (eg, on an airplane). 
 
 <b>Local CDN is compatible with Rails 2.x and Rails 3.</b>
 
 
-== Prerequisites
+== 1. Install
 
-For YUI to be served locally, please install it on your development machine. If you use this tag in your view:
+=== As a Gem (on Rails 3)
 
-  <%= yui_stylesheet_link_tag "2.7.0/build/base/base-min.css" %>
+Add this to your Gemfile:
 
-then the file must be available at:
+  gem "local_cdn"
 
-  http:// localhost/yui/2.7.0/build/base/base-min.css
+and run this at the command prompt:
 
-Basically, just create a +yui+ directory in your local web server's DocumentRoot and unzip the entire YUI package to it, renaming the package's root directory to its version number.
+  bundle install
+
+=== Or As a Plugin
+
+At the command prompt:
+
+  rails plugin install git://github.com/alexreisner/local_cdn.git
+
+
+== 2. Configure
+
+You have to tell LocalCDN what CDNs you're using. Create a <tt>config/cdn.yml</tt> file like the following, adding whatever CDNs you wish:
+
+  google:
+    remote: "http://ajax.googleapis.com/ajax/libs/"
+    local: "http://localhost/local_cdn/"
+
+
+== 3. Use
+
+To use LocalCDN you must change your stylesheet and javascript inclusion tags slightly. Prepend +cdn_+ to the method name and add a new first argument which is the name of the desired CDN (as a symbol), as specified in +cdn.yml+. For example, if you're currently loading jQuery from Google's CDN you probably have something like this:
+
+  <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" %>
+
+To ensure that jQuery still gets served when you don't have a network connection, you would change the above tag to the following (assuming you have the above entry for +google+ in your +cdn.yml+:
+
+  <%= cdn_javascript_include_tag :google, "jquery/1.4.3/jquery.min.js" %>
+
+Needless to say, you must also make sure the file is available locally at <tt>http://localhost/local_cdn/jquery/1.4.3/jquery.min.js</tt>.
 
 
 Copyright (c) 2009-10 Alex Reisner, released under the MIT license

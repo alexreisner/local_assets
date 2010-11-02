@@ -1,92 +1,59 @@
+require 'config'
+
 module LocalCDN
 
   ##
-  # Render a stylesheet link tag for an array of YUI stylesheets. Uses local
-  # copy in development mode, Yahoo CDN otherwise. Takes an array of
-  # (relative) stylesheet URLs. For example:
+  # Render a stylesheet link tag.
+  # Uses local copy in development mode, CDN otherwise.
   #
-  #   <%= yui_stylesheet_link_tag \
-  #     "2.7.0/build/reset-fonts-grids/reset-fonts-grids.css",
-  #     "2.7.0/build/base/base-min.css",
-  #     "2.7.0/build/container/assets/container-core.css",
-  #     "2.7.0/build/tabview/assets/tabview-core.css" %>
-  #
-  def yui_stylesheet_link_tag(*files)
-    yui_include_tag(:stylesheet_link, files)
+  def cdn_stylesheet_link_tag(cdn, file)
+    cdn_include_tag(:stylesheet, cdn, file)
   end
 
   ##
-  # Render a javascript include tag for an array of YUI scripts. Uses local
-  # copy in development mode, Yahoo CDN otherwise. Takes an array of
-  # (relative) script URLs. For example:
+  # Render a JavaScript include tag.
+  # Uses local copy in development mode, CDN otherwise.
   #
-  #   <%= yui_javascript_include_tag \
-  #     "2.7.0/build/yahoo-dom-event/yahoo-dom-event.js",
-  #     "2.7.0/build/dragdrop/dragdrop-min.js",
-  #     "2.7.0/build/container/container-min.js" %>
-  #
-  def yui_javascript_include_tag(*files)
-    yui_include_tag(:javascript_include, files)
-  end
-
-  ##
-  # Render a Prototype include tag. Uses local copy in development mode,
-  # Google CDN otherwise.
-  #
-  def prototype_include_tag
-    out = javascript_include_tag(development?? "prototype" :
-      "http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js")
-    rails_3?? out.html_safe : out
-  end
-
-  ##
-  # Render a Scriptaculous include tag. Uses local copy in development mode,
-  # Google CDN otherwise.
-  #
-  def scriptaculous_include_tag(*files)
-    unless development?
-      files.map! do |f|
-        "http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/#{f}.js"
-      end
-    end
-    out = javascript_include_tag(*files)
-    rails_3?? out.html_safe : out
+  def cdn_javascript_include_tag(cdn, file)
+    cdn_include_tag(:javascript, cdn, file)
   end
 
 
   private # -----------------------------------------------------------------
 
-  ##
-  # Render a YUI include tag. The +type+ parameter should be a string
-  # or symbol: :javascript_include or :stylesheet_link.
-  # The +files+ parameter is an array of filenames.
-  #
-  def yui_include_tag(type, files)
-    if development?
-      out = files.map{ |f|
-        send("#{type}_tag", local_base_yui_url + f)
-      }.join("\n")
+  # TODO: actually read config file
+  def cdn_config
+    if defined?(@config)
+      @config
     else
-      out = send("#{type}_tag",
-        "http://yui.yahooapis.com/combo?" + files.join("&"))
+      @config = LocalCDN::Config.new
     end
-    rails_3?? out.html_safe : out
+  end
+
+  ##
+  # Get the URL of the named CDN.
+  # URLs are specified in the local_cdn config file.
+  #
+  def cdn_url(name)
+    # TODO: raise more helpful exception when cdn name not found
+    cdn_config.urls[name.to_s][local_request?? 'local' : 'remote']
+  end
+
+  ##
+  # Render a stylesheet or JavaScript include tag.
+  #
+  def cdn_include_tag(type, cdn, file)
+    method = type == :javascript ? :javascript_include_tag : :stylesheet_link_tag
+    send(method, cdn_url(cdn) + file)
   end
 
   ##
   # Are we in the development environment and on localhost?
   #
-  def development?
+  def local_request?
     Rails.env == "development" and (
       request.server_name =~ /local/ or request.server_name == '127.0.0.1'
     )
-  end
-
-  ##
-  # Base URL for the local YUI installation.
-  #
-  def local_base_yui_url
-    "http://localhost/yui/"
   end
 
   ##
