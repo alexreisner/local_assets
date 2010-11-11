@@ -38,7 +38,12 @@ module LocalCDN
   #
   def cdn_url(name)
     # TODO: raise more helpful exception when cdn name not found
-    cdn_config.urls[name.to_s][local_request?? 'local' : 'remote']
+    urls = cdn_config.urls
+    if local_request? and locals = urls['local']
+      locals[name.to_s]
+    else
+      urls['remote'][name.to_s]
+    end
   end
 
   ##
