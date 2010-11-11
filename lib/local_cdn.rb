@@ -21,7 +21,9 @@ module LocalCDN
 
   private # -----------------------------------------------------------------
 
-  # TODO: actually read config file
+  ##
+  # The CDN configuration object (based on user config files).
+  #
   def cdn_config
     if defined?(@config)
       @config
