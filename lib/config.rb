@@ -1,5 +1,6 @@
 module LocalCDN
   class Config
+    attr_reader :urls
 
     def initialize
       @urls = {}
@@ -7,10 +8,6 @@ module LocalCDN
       if File.exist?(f = "#{Rails.root}/config/cdn.local.yml")
         @urls[:local] = YAML.load_file(f)
       end
-    end
-
-    def urls
-      @urls
     end
   end
 end
