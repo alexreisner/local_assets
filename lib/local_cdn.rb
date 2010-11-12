@@ -34,15 +34,18 @@ module LocalCDN
 
   ##
   # Get the URL of the named CDN.
-  # URLs are specified in the local_cdn config file.
+  # URLs are specified in the local_cdn config files.
   #
   def cdn_url(name)
-    # TODO: raise more helpful exception when cdn name not found
     urls = cdn_config.urls
-    if local_request? and locals = urls[:local]
-      locals[name.to_s]
+    if local_request? and locals = urls[:local] and url = locals[name.to_s]
+      url
     else
-      urls[:remote][name.to_s]
+      if remotes = urls[:remote][name.to_s]
+        remotes
+      else
+        raise MissingCDN, name
+      end
     end
   end
 
@@ -68,5 +71,14 @@ module LocalCDN
   #
   def rails_3?
     String.instance_methods.include?("html_safe?")
+  end
+
+  ##
+  # Exception class, for when the specified CDN has not been defined.
+  #
+  class MissingCDN < NameError
+    def initialize(cdn)
+      super "Expected the CDN '#{cdn}' to be defined in the cdn.remote.yml config file"
+    end
   end
 end
