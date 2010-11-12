@@ -1,1 +1,1 @@
-ActionView::Base.send(:include, LocalCDN)
+require 'local_cdn'

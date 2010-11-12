@@ -82,3 +82,5 @@ module LocalCDN
     end
   end
 end
+
+ActionView::Base.send(:include, LocalCDN)
