@@ -4,10 +4,14 @@ module LocalCDN
 
     def initialize
       @urls = {}
-      @urls[:remote] = YAML.load_file("#{Rails.root}/config/cdn.remote.yml")
-      if File.exist?(f = "#{Rails.root}/config/cdn.local.yml")
+      @urls[:remote] = YAML.load_file(file_path(:remote))
+      if File.exist?(f = file_path(:local))
         @urls[:local] = YAML.load_file(f)
       end
+    end
+
+    def file_path(local_or_remote)
+      File.join Rails.root, "config", "cdn.#{local_or_remote}.yml"
     end
   end
 end
