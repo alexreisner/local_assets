@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name        = "local_cdn"
-  s.version     = File.read(File.dirname(__FILE__) + '/VERSION')
+  s.version     = File.read(File.join(File.dirname(__FILE__), 'VERSION'))
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Alex Reisner"]
   s.email       = ["alex@alexreisner.com"]
