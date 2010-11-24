@@ -38,7 +38,7 @@ module LocalCDN
   #
   def cdn_url(name)
     urls = cdn_config.urls
-    if local_request? and locals = urls[:local] and url = locals[name.to_s]
+    if serve_local_assets? and locals = urls[:local] and url = locals[name.to_s]
       url
     else
       if remotes = urls[:remote][name.to_s]
@@ -58,12 +58,18 @@ module LocalCDN
   end
 
   ##
-  # Are we in the development environment and on localhost?
+  # Should we serve assets from the local mirror?
+  #
+  def serve_local_assets?
+    Rails.env == "development" and local_request?
+  end
+
+  ##
+  # Is the current request a local one?
   #
   def local_request?
-    Rails.env == "development" and (
-      request.server_name =~ /local/ or request.server_name == '127.0.0.1'
-    )
+    s = request.server_name
+    ["localhost", "127.0.0.1"].include?(s) or s.ends_with?(".local")
   end
 
   ##
