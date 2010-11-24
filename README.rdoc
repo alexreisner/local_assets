@@ -1,8 +1,6 @@
-= Local CDN
+= LocalAssets
 
-Local CDN simplifies the inclusion of external stylesheets and JavaScript from various content delivery networks (CDNs), and uses local alternatives for local requests in development mode so your site loads faster, and looks right even when you don't have an Internet connection (eg, on an airplane). 
-
-<b>Local CDN is compatible with Rails 2.x and Rails 3.</b>
+LocalAssets facilitates loading of assets normally served by various content delivery networks (CDNs) from local sources in development so your site loads faster, and works even when you don't have an Internet connection (eg, on an airplane). 
 
 
 == 1. Install
@@ -11,7 +9,7 @@ Local CDN simplifies the inclusion of external stylesheets and JavaScript from v
 
 Add this to your Gemfile:
 
-  gem "local_cdn"
+  gem "local_assets"
 
 and run this at the command prompt:
 
@@ -21,44 +19,20 @@ and run this at the command prompt:
 
 At the command prompt:
 
-  rails plugin install git://github.com/alexreisner/local_cdn.git
+  rails plugin install git://github.com/alexreisner/local_assets.git
 
 
 == 2. Configure
 
-You have to tell LocalCDN the URLs of the CDNs you're using: the remote (normal) URLs and the local (mirror) URLs. You do this in two separate config files:
+Add to your <tt>config/environments/development.rb</tt> file:
 
-  config/cdn.remote.yml
-  config/cdn.local.yml
+  config.middleware.use "Rack::LocalAssets", {
+    "//ajax.googleapis.com/ajax/libs/" => "//localhost/cdn_mirror/google/"
+  }
 
-These files might look something like this:
-
-  # cdn.remote.yml
-  google: "http://ajax.googleapis.com/ajax/libs/"
-  yahoo:  "http://yui.yahooapis.com/"
-
-  # cdn.local.yml
-  google: "http://localhost/cdn_mirror/google/"
-  yahoo:  "http://localhost/cdn_mirror/yahoo/"
-
-<b>Be sure to include the trailing slashes!</b>
-
-Having two separate config files might seem tedious, but there is a good reason for it: developers may keep their local CDN mirrors in different places on their computers. Hence <b>you should check <tt>cdn.remote.yml</tt> into your source code repository, but not <tt>cdn.local.yml</tt></b>. Your application will run just fine without <tt>cdn.local.yml</tt>: remote URLs will be used. If a developer wishes, they can set up a local mirror and create <tt>cdn.local.yml</tt>.
+The configuration hash should contain any URL fragments that should be replaced with local alternatives in the development environment. The above example is for assets normally served by Google's CDN.
 
 To set up a local CDN mirror, see: http://github.com/alexreisner/cdn_mirror
-
-
-== 3. Use
-
-To use LocalCDN you must change your stylesheet and javascript inclusion tags slightly. Prepend +cdn_+ to the method name and add a new first argument which is the name of the desired CDN (as a symbol), as specified in <tt>cdn.remote.yml</tt>. For example, if you're currently loading jQuery from Google's CDN you probably have something like this:
-
-  <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" %>
-
-To ensure that jQuery still gets served when you don't have a network connection, you would change the above tag to the following (assuming you have the above entry for <tt>google</tt> in your <tt>cdn.remote.yml</tt>:
-
-  <%= cdn_javascript_include_tag :google, "jquery/1.4.3/jquery.min.js" %>
-
-Needless to say, you must also make sure the file is available locally at <tt>http://localhost/local_cdn/jquery/1.4.3/jquery.min.js</tt>. Again, to set up a local CDN mirror, see: http://github.com/alexreisner/cdn_mirror
 
 
 Copyright (c) 2009-10 Alex Reisner, released under the MIT license

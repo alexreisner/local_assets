@@ -1,1 +1,1 @@
-require 'local_cdn'
+require 'rack/local_assets'
