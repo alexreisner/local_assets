@@ -18,11 +18,11 @@ The configuration hash should contain any URL fragments that should be replaced 
 
 == Sinatra
 
-require 'local_assets'
+  require 'local_assets'
 
-use Rack::LocalAssets, {
-  "//ajax.googleapis.com/ajax/libs/" => "//localhost/cdn_mirror/google/"
-}
+  use Rack::LocalAssets, {
+    "//ajax.googleapis.com/ajax/libs/" => "//localhost/cdn_mirror/google/"
+  }
 
 
 == To-do List
