@@ -1,23 +1,26 @@
-require 'rake'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rake/testtask'
-require 'rake/rdoctask'
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/**/*_test.rb'
+  test.verbose = true
+end
 
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test the local_assets plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  if File.exist?('VERSION')
+    version = File.read('VERSION')
+  else
+    version = ""
+  end
 
-desc 'Generate documentation for the local_assets plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'LocalAssets'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README.rdoc')
+  rdoc.title = "local_assets #{version}"
+  rdoc.rdoc_files.include('*.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
